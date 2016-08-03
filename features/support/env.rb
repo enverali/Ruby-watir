@@ -2,11 +2,11 @@ require 'watir-webdriver'
 require 'cucumber'
 
 def browser_name
-    (ENV['BROWSER'] ||= 'firefox').downcase.to_sym
+    (ENV['BROWSER'] ||= 'firefox').downcase.to_sym  # allows me to pass browser as a command line argument
 end
 
 def environment
-    (ENV['ENVIRONMENT'] ||= 'prod').downcase.to_sym
+    (ENV['ENVIRONMENT'] ||= 'prod').downcase.to_sym  # allows me to set environment for testing as argument. defaults to 'prod'
 end
 
 Before do |scenario|
@@ -26,9 +26,9 @@ Before do |scenario|
   p "Starting #{scenario}"
   if environment == :int
     @browser = Watir::Browser.new browser_name
-    @browser.goto "http://sandbox.amazon.com"
-    @browser.text_field(:id=>'username').set "test"
-    @browser.text_field(:id=>'password').set "test1234"
+    @browser.goto "http://sandbox.amazon.com"  # this is an example test env. it doesn't exist real world. 
+    @browser.text_field(:id=>'username').set "test" # example of mitigating some test env login - not a real login :)
+    @browser.text_field(:id=>'password').set "test1234" # example of mitigating some test env login - not a real pass :)
     @browser.button(:id => 'submit').click
 
   elsif environment == :local
@@ -40,7 +40,7 @@ elsif environment == :prod
   end
 end
 After do |scenario|
-  if scenario.failed?
+  if scenario.failed?  # the classic take a screenshot if scenario fails block.
     Dir::mkdir('screenshots') if not File.directory?('screenshots')
     screenshot = "./screenshots/FAILED_#{scenario.name.gsub(' ','_').gsub(/[^0-9A-Za-z_]/, '')}.png"
     @browser.driver.save_screenshot(screenshot)
